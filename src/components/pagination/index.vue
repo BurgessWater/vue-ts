@@ -19,13 +19,13 @@ import PageConfig from "./pageConfig"
   })
 export default class Pagination extends Vue {
   
-  @Prop({type: Object}) 
-  config : PageConfig = {}
+  @Prop({type: Object}) config !:PageConfig 
   // data
 
-  total = this.config.total
-  pageSize = this.config.pageSize
-  currentPage =  this.config.currentPage
+  public total = this.config.total
+  public pageSize = this.config.pageSize
+  public currentPage =  this.config.currentPage
+ 
 
   
   // 生命周期
@@ -35,18 +35,23 @@ export default class Pagination extends Vue {
 
   // 发送事件
   @Emit('pagination-change')
-  handleSizeChange (val: number) {
+  handleSizeChange (val: number):PageConfig {
     return {
-      pageSize: val
+      pageSize: val,
+      currentPage: this.currentPage
     }
   }
 
   @Emit('pagination-change')
-  handleCurrentChange (val:number) {
-    return {
-      // pageSize: this.pageSize,
+  handleCurrentChange (val:number): PageConfig {
+
+    const param = {
+      pageSize: this.pageSize,
       currentPage: val
     }
+    console.log('sss')
+    
+    return param
   }
 
 }

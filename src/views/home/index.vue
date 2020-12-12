@@ -14,17 +14,19 @@
     <section class="data-setion" :style="{'height': height}">
       <my-table :list-data="showData" @change-name="changeName"></my-table>
     </section>
-    <el-pagination
+    <!-- <el-pagination
       background
-      :current-page.sync="currentPage"
+      :current-page.sync="pageConfig.currentPage"
+      @size-change="sizeChange"
+      @current-change="curPageChange"
       :page-sizes="[10, 20, 50, 100]"
-      :page-size="10"
+      :page-size="pageConfig.pageSize"
       layout="sizes, prev, pager, next"
-      :total="100">
-   </el-pagination>
-    <!-- <pagination 
+      :total="pageConfig.total">
+   </el-pagination> -->
+    <pagination 
       :config="pageConfig"
-      @pagination-change="pageChange"></pagination> -->
+      @pagination-change="pageChange"></pagination>
   </div>
 </template>
 
@@ -58,9 +60,8 @@ export default class Home extends Vue {
   private input3 = '4354'
   private select = '1'
   private height = '100%'
-  private currentPage = 1
 
-  private listData:any = []
+  private totalData:any = []
   private showData:any = []
   private pageConfig: PageConfig = {
     pageSize: 10,
@@ -90,19 +91,6 @@ export default class Home extends Vue {
     this.height = `${height}px`
   }
 
-  pageChange (param: PageConfig) {
-    console.log('------: ',param)
-    // this.requestData()
-  }
-
-  private requestData ():void {
-    const { pageSize = 10, currentPage = 1 } = this.pageConfig
-    const offset: number = (currentPage -1) * pageSize
-
-    this.showData = this.listData.slice(offset, offset + pageSize)
-    this.pageConfig.total = this.listData.length
-  }
-
   private initData () {
     const arr: Array<any> = []
     Array.from({length: 68}).forEach(() => {
@@ -117,12 +105,38 @@ export default class Home extends Vue {
       })
     })
 
-    this.listData = arr
+    this.totalData = arr
   }
 
-  changeName (str: string ) {
+  pageChange (param: PageConfig) {
+    this.pageConfig.currentPage = param.currentPage
+    this.pageConfig.pageSize = param.pageSize
+    this.requestData()
+  }
 
-    console.log("str---: ",str)
+  private requestData ():void {
+    const { pageSize = 10, currentPage = 1 } = this.pageConfig
+    const offset: number = (currentPage -1) * pageSize
+
+    this.showData = this.totalData.slice(offset, offset + pageSize)
+    console.log("showData: ",this.showData)
+    this.pageConfig.total = this.totalData.length
+  }
+
+
+  sizeChange (val:number) {
+    console.log("sizeChange: ",val)
+    this.pageConfig.pageSize = val
+    this.requestData()
+  }
+  curPageChange (val:number) {
+    console.log("currentPage: ",val)
+    this.pageConfig.currentPage = val
+    this.requestData()
+  }
+
+  changeName () {
+
   }
 }
 </script>
