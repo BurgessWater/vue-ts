@@ -35,7 +35,8 @@ import MyTable from "./component/my-table.vue"
 // 页面组件及接口
 import Pagination from "@/components/pagination/index.vue";
 import PageConfig from "@/components/pagination/pageConfig.ts"
-import router from "@/router";
+
+import { getSoftwareList } from '@/api/index'
 
 
 @Component({
@@ -64,6 +65,10 @@ export default class Home extends Vue {
   private created () {
     this.initData()
     this.requestData();
+
+    getSoftwareList().then(res => {
+      console.log("res: ",res)
+    })
   }
   private mounted () {
     this.setHeight()
@@ -71,20 +76,15 @@ export default class Home extends Vue {
 
   // 方法
   private initData () {
-    const arr: Array<any> = []
-    Array.from({length: 68}).forEach(() => {
-      const num = Math.floor(Math.random() * 10000)
-      arr.push({
-          id: num,
-          name: "Burgess Lee",
-          date: "2020-12-05",
-          language: "ts",
-          licence: "Apfjsdf,fdsjfk ,f,dsfsd",
-          version: "V3.18",
-      })
-    })
+    getSoftwareList().then(res => {
+      console.log("res: ",res)
+      this.totalData = res.data.list
+      this.pageConfig.total = res.data.total
 
-    this.totalData = arr
+      console.log("this.pageConfig.total :",this.pageConfig.total )
+
+      this.requestData()
+    })
   }
   private setHeight () {
     const page: any = document.querySelector('.page')
@@ -104,13 +104,11 @@ export default class Home extends Vue {
     const offset: number = (currentPage -1) * pageSize
 
     this.showData = this.totalData.slice(offset, offset + pageSize)
-    console.log("showData: ",this.showData)
-    this.pageConfig.total = this.totalData.length
   }
   private gotoDetail (item: any) {
 
     console.log("item---: ",item)
-    this,router.push({
+    this.$router.push({
       name: 'software-detail',
       query: item
     })

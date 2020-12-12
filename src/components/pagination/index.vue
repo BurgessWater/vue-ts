@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Emit } from "vue-property-decorator";
+import { Component, Vue, Prop, Emit, Watch } from "vue-property-decorator";
 import PageConfig from "./pageConfig"
 @Component({
     name: 'Pagination'
@@ -27,6 +27,13 @@ export default class Pagination extends Vue {
   public currentPage =  this.config.currentPage
  
 
+ @Watch("config", { deep: true })
+  getCount(newVal: PageConfig) {
+    this.total = newVal.total
+    this.pageSize = newVal.pageSize
+    this.currentPage =  newVal.currentPage
+  }
+ 
   
   // 生命周期
   created (): void {
