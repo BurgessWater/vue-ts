@@ -12,18 +12,8 @@
         </el-input>
     </section>
     <section class="data-setion" :style="{'height': height}">
-      <my-table :list-data="showData" @change-name="changeName"></my-table>
+      <my-table :list-data="showData" @to-detail="gotoDetail"></my-table>
     </section>
-    <!-- <el-pagination
-      background
-      :current-page.sync="pageConfig.currentPage"
-      @size-change="sizeChange"
-      @current-change="curPageChange"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="pageConfig.pageSize"
-      layout="sizes, prev, pager, next"
-      :total="pageConfig.total">
-   </el-pagination> -->
     <pagination 
       :config="pageConfig"
       @pagination-change="pageChange"></pagination>
@@ -45,6 +35,7 @@ import MyTable from "./component/my-table.vue"
 // 页面组件及接口
 import Pagination from "@/components/pagination/index.vue";
 import PageConfig from "@/components/pagination/pageConfig.ts"
+import router from "@/router";
 
 
 @Component({
@@ -57,8 +48,8 @@ import PageConfig from "@/components/pagination/pageConfig.ts"
 
 export default class Home extends Vue {
   // data
-  private input3 = '4354'
-  private select = '1'
+  private input3 = ''
+  private select = ''
   private height = '100%'
 
   private totalData:any = []
@@ -69,11 +60,8 @@ export default class Home extends Vue {
     total: 0
   }
 
-  
-  
   // 生命周期
   private created () {
-    
     this.initData()
     this.requestData();
   }
@@ -82,15 +70,6 @@ export default class Home extends Vue {
   }
 
   // 方法
-  private setHeight () {
-    const page: any = document.querySelector('.page')
-    const header: any = document.querySelector('.el-header')
-    const search: any = document.querySelector('.search-box')
-    const pagination: any = document.querySelector('.el-pagination')
-    const height:number = window.innerHeight - header.offsetHeight - search.offsetHeight - pagination.offsetHeight - 40
-    this.height = `${height}px`
-  }
-
   private initData () {
     const arr: Array<any> = []
     Array.from({length: 68}).forEach(() => {
@@ -107,13 +86,19 @@ export default class Home extends Vue {
 
     this.totalData = arr
   }
-
-  pageChange (param: PageConfig) {
+  private setHeight () {
+    const page: any = document.querySelector('.page')
+    const header: any = document.querySelector('.el-header')
+    const search: any = document.querySelector('.search-box')
+    const pagination: any = document.querySelector('.el-pagination')
+    const height:number = window.innerHeight - header.offsetHeight - search.offsetHeight - pagination.offsetHeight - 40
+    this.height = `${height}px`
+  }
+  private pageChange (param: PageConfig) {
     this.pageConfig.currentPage = param.currentPage
     this.pageConfig.pageSize = param.pageSize
     this.requestData()
   }
-
   private requestData ():void {
     const { pageSize = 10, currentPage = 1 } = this.pageConfig
     const offset: number = (currentPage -1) * pageSize
@@ -122,21 +107,13 @@ export default class Home extends Vue {
     console.log("showData: ",this.showData)
     this.pageConfig.total = this.totalData.length
   }
+  private gotoDetail (item: any) {
 
-
-  sizeChange (val:number) {
-    console.log("sizeChange: ",val)
-    this.pageConfig.pageSize = val
-    this.requestData()
-  }
-  curPageChange (val:number) {
-    console.log("currentPage: ",val)
-    this.pageConfig.currentPage = val
-    this.requestData()
-  }
-
-  changeName () {
-
+    console.log("item---: ",item)
+    this,router.push({
+      name: 'software-detail',
+      query: item
+    })
   }
 }
 </script>
